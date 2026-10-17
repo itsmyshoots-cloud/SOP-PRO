@@ -69,8 +69,14 @@ function App() {
   async function refreshData(user = session?.user) {
     if (!supabase || !user) return;
     setLoading(true); setError('');
-    const names = ['production_lines','products','production_stages','sop_displays','production_plans','sop_documents','distribution_events'];
-    const results = await Promise.all(names.map(n => supabase.from(n).select('*').order('created_at',{ascending:false}).limit(250)));
+    const names = [
+      ['production_lines','created_at'],['products','created_at'],['production_stages','created_at'],
+      ['sop_displays','created_at'],['production_plans','created_at'],['sop_documents','created_at'],
+      ['distribution_events','event_at']
+    ];
+    const results = await Promise.all(names.map(([table,sortColumn]) =>
+      supabase.from(table).select('*').order(sortColumn,{ascending:false}).limit(250)
+    ));
     const failures = results.filter(r=>r.error);
     if (failures.length) setError(failures[0].error.message);
     const setters = [setLines,setProducts,setStages,setDisplays,setPlans,setDocs,setEvents];
