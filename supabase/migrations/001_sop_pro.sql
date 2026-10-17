@@ -218,3 +218,10 @@ with check (public.can_manage_sops() and actor_id = auth.uid());
 grant usage on schema public to authenticated;
 grant select, insert, update, delete on public.user_roles, public.production_lines, public.products, public.production_stages, public.sop_documents, public.sop_displays, public.production_plans, public.plan_stage_assignments, public.distribution_events to authenticated;
 grant select, insert on public.audit_logs to authenticated;
+
+revoke all on function public.current_sop_role() from public, anon;
+revoke all on function public.can_manage_sops() from public, anon;
+revoke all on function public.publish_sop_plan(uuid) from public, anon;
+grant execute on function public.current_sop_role() to authenticated;
+grant execute on function public.can_manage_sops() to authenticated;
+grant execute on function public.publish_sop_plan(uuid) to authenticated;
